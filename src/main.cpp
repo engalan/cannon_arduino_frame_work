@@ -11,14 +11,17 @@
 #include <Stepper.h>
 #include <Servo.h>
 
-#define STEPS             200
-#define BAUD              115200
-#define TOTAL_DEGREE      2040
+#define STEPS               200
+#define BAUD                115200
+#define TOTAL_DEGREE        2040   //2040 = 360°
 
-#define SERVO_PIN          6
-#define TRIGGER            7
-#define TRIGGER_MOTOR_1    9
-#define TRIGGER_MOTOR_2    10
+#define SERVO_HEIGHT        8
+#define SERVO_TRIGGER       7
+#define DC_MOTOR_1          6  //DC motor
+#define DC_MOTOR_2          11 //DC motor
+
+#define FULL_SPEED          128 // 128 = 6V | 255 = 12V
+#define STOP_DC_MOTORS      0
 
 
 void configStepper();
@@ -56,8 +59,8 @@ void loop() {
 }
 
 void configPins(){
-  pinMode(TRIGGER_MOTOR_1,OUTPUT);
-  pinMode(TRIGGER_MOTOR_2,OUTPUT);
+  pinMode(DC_MOTOR_1,OUTPUT);
+  pinMode(DC_MOTOR_2,OUTPUT);
 }
 
 void configStepper() {
@@ -65,8 +68,8 @@ void configStepper() {
 }
 
 void configServo(){
-  servo_motor.attach(SERVO_PIN);
-  trigger.attach(TRIGGER);
+  servo_motor.attach(SERVO_HEIGHT);
+  trigger.attach(SERVO_TRIGGER);
 }
 
 void configSerial(uint32_t baud_rate) {
@@ -110,7 +113,6 @@ void setCoordinates(String com) {
   }else {
     Serial.println("Invalid height");
   }
-
 }
 
 void shoot(){
@@ -124,10 +126,11 @@ void shoot(){
 }
 
 void enableTriggerMotors(){
-  digitalWrite(TRIGGER_MOTOR_1, HIGH);
-  digitalWrite(TRIGGER_MOTOR_2, HIGH);
+  analogWrite(DC_MOTOR_1, FULL_SPEED);
+  analogWrite(DC_MOTOR_2, FULL_SPEED);
 }
 void disableTriggerMotors(){
-  digitalWrite(TRIGGER_MOTOR_1, LOW);
-  digitalWrite(TRIGGER_MOTOR_2, LOW);
+  // digitalWrite(DC_MOTOR_1, LOW);
+  analogWrite(DC_MOTOR_1, STOP_DC_MOTORS);
+  digitalWrite(DC_MOTOR_2, STOP_DC_MOTORS);
 }
